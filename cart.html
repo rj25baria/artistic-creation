@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Your Cart - Handicrafy Luxe</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #fff;
+      color: #333;
+    }
+
+    header {
+      padding: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #fff;
+      border-bottom: 1px solid #eee;
+    }
+
+    .cart-items {
+      padding: 16px;
+    }
+
+    .cart-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 16px;
+      background: #f9f9f9;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    }
+
+    .cart-item img {
+      width: 90px;
+      height: 90px;
+      object-fit: cover;
+    }
+
+    .item-info {
+      padding: 10px;
+      flex: 1;
+    }
+
+    .item-info h4 {
+      margin: 0 0 4px;
+      font-size: 15px;
+    }
+
+    .item-info p {
+      margin: 0;
+      color: #ff6f61;
+    }
+
+    .remove-btn {
+      background: transparent;
+      border: none;
+      color: red;
+      font-size: 16px;
+      cursor: pointer;
+      margin-right: 10px;
+    }
+
+    .total {
+      padding: 16px;
+      font-weight: bold;
+      font-size: 18px;
+      border-top: 1px solid #eee;
+    }
+
+    .empty {
+      text-align: center;
+      padding: 40px 20px;
+      color: #999;
+    }
+
+    .checkout {
+      display: block;
+      margin: 16px auto;
+      background: #ff6f61;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h2>Your Cart</h2>
+    <a href="index.html" style="text-decoration:none;color:#333;"><i class="fas fa-home"></i></a>
+  </header>
+
+  <div id="cartContainer" class="cart-items"></div>
+  <div class="total" id="cartTotal">Total: ₹0</div>
+  <button class="checkout" onclick="alert('Proceeding to checkout...')">Checkout</button>
+
+  <script>
+    function updateCartIcon() {
+      const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+      const icon = document.getElementById("cartCount");
+      const count = cart.reduce((sum, item) => sum + item.quantity, 0);
+      if (icon) icon.innerText = count > 0 ? count : "";
+    }
+
+    function loadCart() {
+      const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+      const container = document.getElementById("cartContainer");
+      const total = document.getElementById("cartTotal");
+
+      if (cart.length === 0) {
+        container.innerHTML = '<div class="empty">Your cart is empty 🛒</div>';
+        total.innerText = '';
+        return;
+      }
+
+      let totalPrice = 0;
+      container.innerHTML = "";
+      cart.forEach((item, index) => {
+        totalPrice += item.price * item.quantity;
+
+        container.innerHTML += `
+          <div class="cart-item">
+            <img src="${item.image}" alt="${item.name}">
+            <div class="item-info">
+              <h4>${item.name} × ${item.quantity}</h4>
+              <p>₹${item.price * item.quantity}</p>
+            </div>
+            <button class="remove-btn" onclick="removeItem(${index})"><i class="fas fa-trash"></i></button>
+          </div>
+        `;
+      });
+
+      total.innerText = "Total: ₹" + totalPrice;
+    }
+
+    function removeItem(index) {
+      let cart = JSON.parse(localStorage.getItem("cart"));
+      cart.splice(index, 1);
+      localStorage.setItem("cart", JSON.stringify(cart));
+      loadCart();
+      updateCartIcon();
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      loadCart();
+      updateCartIcon();
+    });
+  </script>
+
+</body>
+</html>
